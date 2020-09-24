@@ -6,6 +6,10 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -115,47 +119,48 @@ public final class StudentLogin extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == login) {
-
-            String un = uf.getText();
+            
+            String id = uf.getText();
             String pass = pf.getText();
 
             try {
-                Scanner fs = new Scanner(file1);
-
-                int i = 0;
-                boolean found = false;
-
-                while (fs.hasNext()) {
-                    String s = fs.nextLine();
-                    i++;
-                    //System.out.println(s);
-
-                    if (s.equals(un) && (i % 11) == 1) {
-
-                        found = true;
-                    }
-                    if (found == true && (i % 11) == 2) {
-
-                        if (s.equals(pass)) {
-                            dispose();
-                            Profile fr = new Profile(un);
-                            fr.setVisible(true);
-                            break;
-                        }
-                        else
-                            found=false;
-
-                    }
-
-                }
-                fs.close();
                 
-                if(found==false)
+                String url="jdbc:mysql://localhost/ums";
+                String userName="root";
+                String Password="";
+                
+                Class.forName("com.mysql.jdbc.Driver");
+                
+                String query="SELECT name,pass from students where sid="+id;
+                
+                Connection con=DriverManager.getConnection(url,userName,Password);
+                Statement st=con.createStatement();
+
+                ResultSet rs=st.executeQuery(query);
+
+                rs.next();
+
+                String name=rs.getString("name");
+                String pw=rs.getString("pass");
+
+                System.out.println(name);
+                System.out.println(pw);
+                
+                if(pass.equals(pw))
+                {
+                    dispose();
+                    Profile fr = new Profile(id);
+                    fr.setVisible(true);
+                }
+                else
                 {
                     lb1.setVisible(true);
                 }
+                
+                
 
             } catch (Exception ee) {
+                lb1.setVisible(true);
                 System.out.println(ee);
             }
 
