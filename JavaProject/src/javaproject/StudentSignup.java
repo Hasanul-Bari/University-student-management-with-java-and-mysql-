@@ -9,6 +9,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Scanner;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -165,7 +170,6 @@ public final class StudentSignup extends JFrame implements ActionListener {
         cbd.setBounds(445, 210, 60, 35);
         cbd.setFont(f1);
         imglabel.add(cbd);
-        
 
         m = new JLabel("MM:");
         m.setBounds(510, 210, 50, 40);
@@ -288,13 +292,6 @@ public final class StudentSignup extends JFrame implements ActionListener {
         cbd.addActionListener(this);
         cbm.addActionListener(this);
         cby.addActionListener(this);
-        
-        
-        
-        
-        
-        
-        
 
         /*-----------------file-------------------------------------------------------*/
         dir = new File("Data");
@@ -310,104 +307,136 @@ public final class StudentSignup extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == signup) {
+            
+            lb1.setVisible(false);
+            lb.setVisible(false);
 
             String pass = pf.getText();
             String cpass = cpf.getText();
+            String id = uf.getText();
+                    
+            if(id.equals(""))
+            {
+                lb1.setText("ID can't be empty");
+                lb1.setVisible(true);
+            }
+            else if (pass.equals(cpass)) {
 
-            if (pass.equals(cpass)) {
-
-                String un = uf.getText();
-
-                boolean dupli = false;
+                
 
                 try {
-                    Scanner fs = new Scanner(file1);
 
-                    int i = 0;
+                    String url = "jdbc:mysql://localhost/ums";
+                    String userName = "root";
+                    String Password = "";
 
-                    while (fs.hasNext()) {
-                        String s = fs.nextLine();
-                        i++;
-                        //System.out.println(s);
-                        if (s.equals(un) && (i % 11) == 1) {
-                            lb1.setText("ID already exists");
-                            lb1.setVisible(true);
-                            dupli = true;
+                    Class.forName("com.mysql.jdbc.Driver");
 
-                            break;
+                    String query = "SELECT COUNT(*) FROM students where sid="+id;
+                    
+                    Connection con=DriverManager.getConnection(url,userName,Password);
+                    Statement st=con.createStatement();
+
+                    ResultSet rs=st.executeQuery(query);
+
+                    rs.next();
+
+                    String cnt=rs.getString("COUNT(*)");
+
+                    System.out.println(cnt);
+                    
+            
+                    
+                    if(cnt.equals("1"))
+                    {
+                        lb1.setText("ID already exists");
+                        lb1.setVisible(true);
+                    }
+                    else
+                    {
+                        /*--------------insert data--------------------------*/
+                        
+                        
+                        String query2 = "INSERT INTO students VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+
+                        Connection con2 = DriverManager.getConnection(url, userName, Password);
+                        PreparedStatement st2 = con.prepareStatement(query2);
+                        
+                        
+                        /*-------------------------------getting data from textfield-------------*/
+                        
+                        String nam, bd, gen = "", em, mb, dep, lev, sem, ses;
+
+                        nam = namf.getText();
+
+                        String d, m, y;
+                        d = cbd.getSelectedItem().toString();
+                        m = cbm.getSelectedItem().toString();
+                        y = cby.getSelectedItem().toString();
+
+                        bd = d + "/" + m + "/" + y;
+
+                        if (rb1.isSelected()) {
+                            gen = "Male";
+                        } else if (rb2.isSelected()) {
+                            gen = "Female";
                         }
 
-                    }
-                    fs.close();
+                        em = emf.getText();
+                        mb = mbf.getText();
+                        dep = depf.getText();
+                        lev = cbl.getSelectedItem().toString();
+                        sem = cbsm.getSelectedItem().toString();
+                        ses = cbss.getSelectedItem().toString();
+                        
+                        
+                        /*-------------------------------inserting  data  into statement-------------*/
 
-                } catch (Exception ee) {
+                        st2.setString(1,id);
+                        st2.setString(2,nam);
+                        st2.setString(3,pass);
+                        st2.setString(4,bd);
+                        st2.setString(5,em);
+                        st2.setString(6,mb);
+                        st2.setString(7,dep);
+                        st2.setString(8,lev);
+                        st2.setString(9,sem);
+                        st2.setString(10,ses);
+                        st2.setString(11,gen);
+                        
+
+                        int  count = st2.executeUpdate();
+
+                        System.out.println(count+" rows affected");
+                        
+                        if(count==1)
+                        {
+                            dispose();
+                            Profile fr = new Profile(id);
+                            fr.setVisible(true);
+                        }
+                        else
+                        {
+                            System.out.println("signup failed");
+                        }
+                        
+                        
+                    }
+
+                   
+                } catch (Exception ee) {     
                     System.out.println(ee);
                 }
 
-                //write
-                if (dupli == false) {
-
-                    String nam, bd, gen = "", em, mb, dep, lev, sem, ses;
-
-                    nam = namf.getText();
-
-                    String d, m, y;
-                    d = cbd.getSelectedItem().toString();
-                    m = cbm.getSelectedItem().toString();
-                    y = cby.getSelectedItem().toString();
-
-                    bd = d + "/" + m + "/" + y;
-
-                    if (rb1.isSelected()) {
-                        gen = "Male";
-                    } else if (rb2.isSelected()) {
-                        gen = "Female";
-                    }
-
-                    em = emf.getText();
-                    mb = mbf.getText();
-                    dep = depf.getText();
-                    lev = cbl.getSelectedItem().toString();
-                    sem = cbsm.getSelectedItem().toString();
-                    ses = cbss.getSelectedItem().toString();
-
-                    try {
-
-                        // Open given file in append mode. 
-                        BufferedWriter out = new BufferedWriter(
-                                new FileWriter(file1, true));
-
-                        out.write(un + "\r\n");
-                        out.write(pass + "\r\n");
-                        out.write(nam + "\r\n");
-                        out.write(bd + "\r\n");
-                        out.write(gen + "\r\n");
-                        out.write(em + "\r\n");
-                        out.write(mb + "\r\n");
-                        out.write(dep + "\r\n");
-                        out.write(lev + "\r\n");
-                        out.write(sem + "\r\n");
-                        out.write(ses + "\r\n");
-
-                        lb.setVisible(false);
-                        lb1.setVisible(false);
-                        out.close();
-
-                        dispose();
-                        Profile fr = new Profile(un);
-                        fr.setVisible(true);
-
-                    } catch (IOException ee) {
-                        System.out.println("exception occoured" + ee);
-                    }
-
-                }
-
-            } else {
+             
+            } 
+            else {
                 lb.setText("Password not matched ");
                 lb.setVisible(true);
             }
-        } else if (e.getSource() == login) {
+        } 
+        
+        else if (e.getSource() == login) {
 
             dispose();
             StudentLogin fr = new StudentLogin();
