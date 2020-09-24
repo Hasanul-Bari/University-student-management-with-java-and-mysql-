@@ -288,6 +288,13 @@ public final class StudentSignup extends JFrame implements ActionListener {
         cbd.addActionListener(this);
         cbm.addActionListener(this);
         cby.addActionListener(this);
+        
+        
+        
+        
+        
+        
+        
 
         /*-----------------file-------------------------------------------------------*/
         dir = new File("Data");

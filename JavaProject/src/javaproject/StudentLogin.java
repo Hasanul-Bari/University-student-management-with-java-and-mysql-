@@ -104,14 +104,7 @@ public final class StudentLogin extends JFrame implements ActionListener {
         signup.addActionListener(this);
         back.addActionListener(this);
 
-        /*-----------------file-------------------------------------------------------*/
-        dir = new File("Data");
-        dir.mkdir();
-
-        loc = dir.getAbsolutePath();
-        
-
-        file1 = new File(loc + "/signup.txt");
+      
 
     }
 
@@ -123,6 +116,9 @@ public final class StudentLogin extends JFrame implements ActionListener {
             String id = uf.getText();
             String pass = pf.getText();
 
+            /*--------------------------------sql----------------------------------*/
+            
+            
             try {
                 
                 String url="jdbc:mysql://localhost/ums";
@@ -157,12 +153,13 @@ public final class StudentLogin extends JFrame implements ActionListener {
                     lb1.setVisible(true);
                 }
                 
-                
-
+   
             } catch (Exception ee) {
                 lb1.setVisible(true);
                 System.out.println(ee);
             }
+            
+            /*--------------------------------sql----------------------------------*/
 
         } else if (e.getSource() == signup) {
 

@@ -6,6 +6,10 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -32,7 +36,7 @@ public final class Profile extends JFrame implements ActionListener {
     private File dir, file1, file2;
     String loc, tmp;
 
-    Profile(String s) {
+    Profile(String id) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBounds(10, 10, 1340, 720);
         this.setTitle("          Profile          ");
@@ -168,7 +172,7 @@ public final class Profile extends JFrame implements ActionListener {
         edit.setFont(f);
         imglabel.add(edit);
 
-        tmp = s;
+      
 
         showm = new JButton("Show Messages");
         showm.setBounds(50, 470, 250, 50);
@@ -190,70 +194,62 @@ public final class Profile extends JFrame implements ActionListener {
         logout.addActionListener(this);
         edit.addActionListener(this);
         showm.addActionListener(this);
+        
+        
+     
+        /*--------------------------------sql----------------------------------*/
+            
+            
+            try {
+                
+                String url="jdbc:mysql://localhost/ums";
+                String userName="root";
+                String Password="";
+                
+                Class.forName("com.mysql.jdbc.Driver");
+                
+                String query="SELECT * from students where sid="+id;
+                
+                Connection con=DriverManager.getConnection(url,userName,Password);
+                Statement st=con.createStatement();
 
-        /*-----------------file-------------------------------------------------------*/
-        dir = new File("Data");
-        dir.mkdir();
+                ResultSet rs=st.executeQuery(query);
 
-        loc = dir.getAbsolutePath();
+                rs.next();
 
-        file1 = new File(loc + "/signup.txt");
-        file2 = new File(loc + "/message.txt");
+                String name=rs.getString("name");
+                String dob=rs.getString("dob");
+                String gender=rs.getString("gender");
+                String email=rs.getString("email");
+                String phone=rs.getString("phone");
+                String dept=rs.getString("dept");
+                String level=rs.getString("level");
+                String semester=rs.getString("semester");
+                String session=rs.getString("session");
+                  
 
-        try {
-            Scanner fs = new Scanner(file1);
-
-            int i = 0;
-            boolean found = false;
-
-            while (fs.hasNext()) {
-                String ss = fs.nextLine();
-                i++;
-
-                //System.out.println(ss+" "+i);
-                if (ss.equals(s) && (i % 11) == 1) {
-                    found = true;
-
-                    uf.setText(ss);
-                }
-
-                if (found == true && (i % 11) == 3) {
-                    namf.setText(ss);
-
-                }
-
-                if (found == true && (i % 11) == 4) {
-                    bdf.setText(ss);
-                }
-                if (found == true && (i % 11) == 5) {
-                    genf.setText(ss);
-                }
-                if (found == true && (i % 11) == 6) {
-                    emf.setText(ss);
-                }
-                if (found == true && (i % 11) == 7) {
-                    mbf.setText(ss);
-                }
-                if (found == true && (i % 11) == 8) {
-                    depf.setText(ss);
-                }
-                if (found == true && (i % 11) == 9) {
-                    levf.setText(ss);
-                }
-                if (found == true && (i % 11) == 10) {
-                    semf.setText(ss);
-                }
-                if (found == true && (i % 11) == 0) {
-                    sesf.setText(ss);
-                    break;
-                }
-
+                //System.out.println("profile  "+name);
+                
+                
+                uf.setText(id);
+                namf.setText(name);
+                bdf.setText(dob);
+                genf.setText(gender);
+                emf.setText(email);
+                mbf.setText(phone);
+                depf.setText(dept);
+                levf.setText(level);
+                semf.setText(semester);
+                sesf.setText(session);
+                  
+   
+            } catch (Exception ee) {
+             
+                System.out.println(ee);
             }
-            fs.close();
-
-        } catch (Exception ee) {
-            System.out.println(ee);
-        }
+            
+            /*--------------------------------sql----------------------------------*/
+     
 
     }
 
