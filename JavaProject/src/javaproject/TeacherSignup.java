@@ -185,7 +185,7 @@ public final class TeacherSignup extends JFrame implements ActionListener {
 
                     String cnt = rs.getString("COUNT(*)");
 
-                    System.out.println(cnt);
+                    //System.out.println(cnt);
 
                     if (cnt.equals("1")) {
                         lb1.setText("Email already exists");
@@ -216,7 +216,7 @@ public final class TeacherSignup extends JFrame implements ActionListener {
 
                         int count = st2.executeUpdate();
 
-                        System.out.println(count + " rows affected");
+                        //System.out.println(count + " rows affected");
                         if (count == 1) {
                             dispose();
                             TProfile fr = new TProfile(email);

@@ -9,6 +9,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,7 +42,7 @@ public final class TProfile extends JFrame implements ActionListener {
     private File dir, file1,file2;
     String loc;
 
-    TProfile(String s) {
+    TProfile(String email) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBounds(10, 10, 1340, 720);
         this.setTitle("       Teacher   Profile          ");
@@ -144,8 +148,6 @@ public final class TProfile extends JFrame implements ActionListener {
         
         
         
-        
-
 
         logout = new JButton("Log Out");
         logout.setBounds(1000, 620, 300, 50);
@@ -175,67 +177,62 @@ public final class TProfile extends JFrame implements ActionListener {
         
         
         imglabel.add(sp);
-        
-        
-        
-        
-        
+               
         
 
         logout.addActionListener(this);
         writemsg.addActionListener(this);
         submit.addActionListener(this);
 
-        /*-----------------file-------------------------------------------------------*/
-        dir = new File("Data");
-        dir.mkdir();
-
-        loc = dir.getAbsolutePath();
         
-
-        file1 = new File(loc + "/teacherinfo.txt");
-        file2 = new File(loc + "/message.txt");
-
-        try {
-            Scanner fs = new Scanner(file1);
-
-            int i = 0;
-            boolean found = false;
-
-            while (fs.hasNext()) {
-                String ss = fs.nextLine();
-                i++;
-
-                //System.out.println(ss+" "+i);
-                if (ss.equals(s) && (i % 5) == 1) {
-                    found = true;
-
-                    uf.setText(ss);
-                }
-
-                if (found == true && (i % 5) == 3) {
-                    namf.setText(ss);
-                }
-                if (found == true && (i % 5) == 4) {
-                    emf.setText(ss);
-                }
-                if (found == true && (i % 5) == 0) {
-                    depf.setText(ss);
-                    break;
-                }
-
+        
+         /*--------------------------------sql----------------------------------*/
+            
+            
+            try {
                 
+                String url="jdbc:mysql://localhost/ums";
+                String userName="root";
+                String Password="";
                 
+                Class.forName("com.mysql.jdbc.Driver");
+                
+                String query="SELECT * from teachers where email='"+email+"'";
+                
+                Connection con=DriverManager.getConnection(url,userName,Password);
+                Statement st=con.createStatement();
+
+                ResultSet rs=st.executeQuery(query);
+
+                rs.next();
+
+                String name=rs.getString("name");
+                String phone=rs.getString("phone");
+                String dept=rs.getString("dept");
                
-                
-               
+                  
 
+                //System.out.println("profile  "+name);
+                
+                
+                namf.setText(name);
+                emf.setText(email);
+                mbf.setText(phone);
+                depf.setText(dept);
+               
+                  
+   
+            } catch (Exception ee) {
+             
+                
+                System.out.println(ee);
             }
-            fs.close();
+            
+            /*--------------------------------sql----------------------------------*/
 
-        } catch (Exception ee) {
-            System.out.println(ee);
-        }
+        
+        
+        
 
     }
 
@@ -289,7 +286,7 @@ public final class TProfile extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        TProfile fr = new TProfile("AbdusShahid");
+        TProfile fr = new TProfile("hasan@gmail.com");
         fr.setVisible(true);
     }
 
