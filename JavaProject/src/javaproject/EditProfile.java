@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -33,8 +32,8 @@ public final class EditProfile extends JFrame implements ActionListener {
     private Font f, f1, f2, f3;
     private JButton save, delete;
 
-    private File dir, file1, file2;
-    String loc, tempid;
+    
+    String tempid;
 
     private JRadioButton rb1, rb2;
     private ButtonGroup grp;

@@ -5,16 +5,11 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -34,8 +29,7 @@ public final class TeacherSignup extends JFrame implements ActionListener {
     private Font f, f1, f2;
     private JButton login, clear, signup;
 
-    private File dir, file1;
-    String loc;
+   
 
     TeacherSignup() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

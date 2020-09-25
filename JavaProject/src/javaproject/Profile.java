@@ -37,9 +37,9 @@ public final class Profile extends JFrame implements ActionListener {
     String loc, tmp;
 
     Profile(String id) {
-        
-        tmp=id;
-        
+
+        tmp = id;
+
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBounds(10, 10, 1340, 720);
         this.setTitle("          Profile          ");
@@ -175,8 +175,6 @@ public final class Profile extends JFrame implements ActionListener {
         edit.setFont(f);
         imglabel.add(edit);
 
-      
-
         showm = new JButton("Show Messages");
         showm.setBounds(50, 470, 250, 50);
         showm.setFont(f);
@@ -197,64 +195,53 @@ public final class Profile extends JFrame implements ActionListener {
         logout.addActionListener(this);
         edit.addActionListener(this);
         showm.addActionListener(this);
-        
-        
-     
+
         /*--------------------------------sql----------------------------------*/
-            
-            
-            try {
-                
-                String url="jdbc:mysql://localhost/ums";
-                String userName="root";
-                String Password="";
-                
-                Class.forName("com.mysql.jdbc.Driver");
-                
-                String query="SELECT * from students where sid="+id;
-                
-                Connection con=DriverManager.getConnection(url,userName,Password);
-                Statement st=con.createStatement();
+        try {
 
-                ResultSet rs=st.executeQuery(query);
+            String url = "jdbc:mysql://localhost/ums";
+            String userName = "root";
+            String Password = "";
 
-                rs.next();
+            Class.forName("com.mysql.jdbc.Driver");
 
-                String name=rs.getString("name");
-                String dob=rs.getString("dob");
-                String gender=rs.getString("gender");
-                String email=rs.getString("email");
-                String phone=rs.getString("phone");
-                String dept=rs.getString("dept");
-                String level=rs.getString("level");
-                String semester=rs.getString("semester");
-                String session=rs.getString("session");
-                  
+            String query = "SELECT * from students where sid=" + id;
 
-                //System.out.println("profile  "+name);
-                
-                
-                uf.setText(id);
-                namf.setText(name);
-                bdf.setText(dob);
-                genf.setText(gender);
-                emf.setText(email);
-                mbf.setText(phone);
-                depf.setText(dept);
-                levf.setText(level);
-                semf.setText(semester);
-                sesf.setText(session);
-                  
-   
-            } catch (Exception ee) {
-             
-                
-                System.out.println(ee);
-            }
-            
-            /*--------------------------------sql----------------------------------*/
-     
+            Connection con = DriverManager.getConnection(url, userName, Password);
+            Statement st = con.createStatement();
 
+            ResultSet rs = st.executeQuery(query);
+
+            rs.next();
+
+            String name = rs.getString("name");
+            String dob = rs.getString("dob");
+            String gender = rs.getString("gender");
+            String email = rs.getString("email");
+            String phone = rs.getString("phone");
+            String dept = rs.getString("dept");
+            String level = rs.getString("level");
+            String semester = rs.getString("semester");
+            String session = rs.getString("session");
+
+            //System.out.println("profile  "+name);
+            uf.setText(id);
+            namf.setText(name);
+            bdf.setText(dob);
+            genf.setText(gender);
+            emf.setText(email);
+            mbf.setText(phone);
+            depf.setText(dept);
+            levf.setText(level);
+            semf.setText(semester);
+            sesf.setText(session);
+
+        } catch (Exception ee) {
+
+            System.out.println(ee);
+        }
+
+        /*--------------------------------sql----------------------------------*/
     }
 
     @Override
@@ -274,46 +261,38 @@ public final class Profile extends JFrame implements ActionListener {
         } else if (e.getSource() == showm) {
 
             sp.setVisible(true);
-            String ses=sesf.getText();
-            String dep=depf.getText();
+            String ses = sesf.getText();
+            String dep = depf.getText();
             String t;
 
             try {
-                Scanner fs = new Scanner(file2);
 
-                int i = 1;
-                boolean fo1=false,fo2=false;
+                String url = "jdbc:mysql://localhost/ums";
+                String userName = "root";
+                String Password = "";
 
-                while (fs.hasNext()) {
-                    String s = fs.nextLine();
-                    i++;
-                    
-                    //System.out.println(s);
-                    
-                    if (s.equals("***") ) {
-                        
-                        i=1;    
-                        fo1=false;
-                        fo2=false;
-                    }
-                    else if(i==2 &&  s.equals(ses)){
-                        
-                        fo1=true;
-                    }
-                    else if(i==3 && s.equals(dep)){
-                        
-                        fo2=true;
-                    }
-                    else if(fo1==true && fo2==true){
-                     
-                        ta.append(s+"\r\n");
-                    }
-                        
-                    
-                    
+                Class.forName("com.mysql.jdbc.Driver");
 
+                String query = "SELECT * from messages where session='" +ses+ "' and dept='"+dep+"'";
+
+                Connection con = DriverManager.getConnection(url, userName, Password);
+                Statement st = con.createStatement();
+
+                ResultSet rs = st.executeQuery(query);
+                
+                while (rs.next()){
+                    
+                    //System.out.println(rs.getString("msgbody"));
+                    
+                    ta.append("Message from "+rs.getString("tname")+" on "+rs.getString("date")+"\n");
+                    
+                    ta.append(rs.getString("msgbody")+"\r\n");
+                    
+                    ta.append("\r\n");
+                    
+                    
                 }
-                fs.close();
+                
 
             } catch (Exception ee) {
                 System.out.println(ee);
