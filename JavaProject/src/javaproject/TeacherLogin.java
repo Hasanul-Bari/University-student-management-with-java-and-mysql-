@@ -6,6 +6,10 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,8 +23,8 @@ public final class TeacherLogin extends JFrame implements ActionListener {
     private Container c;
 
     private ImageIcon img;
-    private JLabel imglabel, ul, pl, lb1, lb2;
-    private JTextField uf;
+    private JLabel imglabel, eml, pl, lb1, lb2;
+    private JTextField emf;
     private JPasswordField pf;
 
     private Font f, f1, f2;
@@ -48,26 +52,26 @@ public final class TeacherLogin extends JFrame implements ActionListener {
         imglabel.setBounds(0, 0, img.getIconWidth(), img.getIconHeight());
         c.add(imglabel);
 
-        ul = new JLabel("Username : ");
-        ul.setBounds(200, 150, 400, 50);
-        ul.setFont(f);
-        imglabel.add(ul);
+        eml = new JLabel("Email : ");
+        eml.setBounds(200, 150, 400, 50);
+        eml.setFont(f);
+        imglabel.add(eml);
 
         pl = new JLabel("Password : ");
         pl.setBounds(200, 210, 400, 50);
         pl.setFont(f);
         imglabel.add(pl);
 
-        uf = new JTextField();
-        uf.setBounds(500, 150, 400, 50);
-        uf.setFont(f1);
-        imglabel.add(uf);
+        emf = new JTextField();
+        emf.setBounds(500, 150, 400, 50);
+        emf.setFont(f1);
+        imglabel.add(emf);
 
         pf = new JPasswordField();
         pf.setBounds(500, 210, 400, 50);
         c.add(pf);
 
-        lb1 = new JLabel("*Invalid Username or password");
+        lb1 = new JLabel("*Invalid email or password");
         lb1.setBounds(500, 270, 400, 50);
         lb1.setForeground(Color.RED);
         lb1.setVisible(false);
@@ -100,14 +104,7 @@ public final class TeacherLogin extends JFrame implements ActionListener {
         signup.addActionListener(this);
         back.addActionListener(this);
 
-        /*-----------------file-------------------------------------------------------*/
-        dir = new File("Data");
-        dir.mkdir();
-
-        loc = dir.getAbsolutePath();
-     
-
-        file1 = new File(loc + "/teacherinfo.txt");
+        
 
     }
 
@@ -116,50 +113,56 @@ public final class TeacherLogin extends JFrame implements ActionListener {
 
         if (e.getSource() == login) {
 
-            String un = uf.getText();
+            String email = emf.getText();
             String pass = pf.getText();
 
+            /*--------------------------------sql----------------------------------*/
+            
+            
             try {
-                Scanner fs = new Scanner(file1);
-
-                int i = 0;
-                boolean found = false;
-
-                while (fs.hasNext()) {
-                    String s = fs.nextLine();
-                    i++;
-                    //System.out.println(s);
-
-                    if (s.equals(un) && (i % 5) == 1) {
-
-                        found = true;
-                    }
-                    if (found == true && (i % 5) == 2) {
-
-                        if (s.equals(pass)) {
-
-                            
-                            dispose();
-                            TProfile fr = new TProfile(un);
-                            fr.setVisible(true);
-                            break;
-                        }
-                        else
-                            found=false;
-
-                    }
-
-                }
-                fs.close();
                 
-                if(found==false)
+                String url="jdbc:mysql://localhost/ums";
+                String userName="root";
+                String Password="";
+                
+                Class.forName("com.mysql.jdbc.Driver");
+                
+                String query="SELECT name,pass from teachers where email='"+email+"'";
+                
+                Connection con=DriverManager.getConnection(url,userName,Password);
+                Statement st=con.createStatement();
+
+                ResultSet rs=st.executeQuery(query);
+
+                rs.next();
+
+                //String name=rs.getString("name");
+                String pw=rs.getString("pass");
+
+                //System.out.println(name);
+                //System.out.println(pw);
+                
+                if(pass.equals(pw))
+                {
+                    dispose();
+                    TProfile fr = new TProfile(email);
+                    fr.setVisible(true);
+                }
+                else
                 {
                     lb1.setVisible(true);
                 }
-
+                
+   
             } catch (Exception ee) {
+                lb1.setVisible(true);
                 System.out.println(ee);
             }
+            
+            /*--------------------------------sql----------------------------------*/
+
+            
+            
 
         } else if (e.getSource() == signup) {
 
