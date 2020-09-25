@@ -27,7 +27,7 @@ public final class TProfile extends JFrame implements ActionListener {
     private ImageIcon img;
     private JLabel imglabel, prof, ul, naml, pl, cpl, eml, mbl, depl, lb, lb1, lb2,depl2,sesl,datl;
     private JTextField depf2,sesf,datf;
-    private JLabel uf, namf, emf, depf;
+    private JLabel uf, namf, emf, depf,mbf;
     private JPasswordField pf, cpf;
     private JTextArea ta;
     private JScrollPane sp;
@@ -69,16 +69,16 @@ public final class TProfile extends JFrame implements ActionListener {
         naml.setFont(f);
         imglabel.add(naml);
 
-        ul = new JLabel("Username          : ");
-        ul.setBounds(150, 110, 400, 50);
-        ul.setFont(f);
-        imglabel.add(ul);
-
-     
         eml = new JLabel("Email                  : ");
-        eml.setBounds(150, 160, 400, 50);
+        eml.setBounds(150, 110, 400, 50);
         eml.setFont(f);
         imglabel.add(eml);
+
+     
+        mbl = new JLabel("Contact No.            : ");
+        mbl.setBounds(150, 160, 400, 50);
+        mbl.setFont(f);
+        imglabel.add(mbl);
 
 
         depl = new JLabel("Department     : ");
@@ -93,16 +93,16 @@ public final class TProfile extends JFrame implements ActionListener {
         namf.setFont(f1);
         imglabel.add(namf);
 
-        uf = new JLabel();
-        uf.setBounds(400, 110, 400, 50);
-        uf.setFont(f1);
-        imglabel.add(uf);
-
-
         emf = new JLabel();
-        emf.setBounds(400, 160, 400, 50);
+        emf.setBounds(400, 110, 400, 50);
         emf.setFont(f1);
         imglabel.add(emf);
+
+
+        mbf = new JLabel();
+        mbf.setBounds(400, 160, 400, 50);
+        mbf.setFont(f1);
+        imglabel.add(mbf);
 
        
 

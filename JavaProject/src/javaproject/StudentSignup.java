@@ -358,7 +358,7 @@ public final class StudentSignup extends JFrame implements ActionListener {
                         
                         String query2 = "INSERT INTO students VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
-                        Connection con2 = DriverManager.getConnection(url, userName, Password);
+                        //Connection con2 = DriverManager.getConnection(url, userName, Password);
                         PreparedStatement st2 = con.prepareStatement(query2);
                         
                         
@@ -407,7 +407,6 @@ public final class StudentSignup extends JFrame implements ActionListener {
                         int  count = st2.executeUpdate();
 
                         System.out.println(count+" rows affected");
-                        
                         if(count==1)
                         {
                             dispose();
@@ -425,7 +424,8 @@ public final class StudentSignup extends JFrame implements ActionListener {
                    
                 } catch (Exception ee) {     
                     System.out.println(ee);
-                }
+                }            
+            
 
              
             } 
