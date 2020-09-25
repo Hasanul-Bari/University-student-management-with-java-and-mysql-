@@ -322,8 +322,7 @@ public final class StudentSignup extends JFrame implements ActionListener {
             }
             else if (pass.equals(cpass)) {
 
-                
-
+               
                 try {
 
                     String url = "jdbc:mysql://localhost/ums";
@@ -354,7 +353,7 @@ public final class StudentSignup extends JFrame implements ActionListener {
                     }
                     else
                     {
-                        /*--------------insert data--------------------------*/
+                        /*------------------------------------------insert data--------------------------*/
                         
                         
                         String query2 = "INSERT INTO students VALUES (?,?,?,?,?,?,?,?,?,?,?)";

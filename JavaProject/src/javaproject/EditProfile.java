@@ -6,8 +6,10 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Formatter;
-import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -32,7 +34,7 @@ public final class EditProfile extends JFrame implements ActionListener {
     private JButton save, delete;
 
     private File dir, file1, file2;
-    String loc, temp;
+    String loc, tempid;
 
     private JRadioButton rb1, rb2;
     private ButtonGroup grp;
@@ -43,7 +45,10 @@ public final class EditProfile extends JFrame implements ActionListener {
 
     private JComboBox cbl, cbsm, cbss, cbd, cbm, cby;
 
-    EditProfile(String s) {
+    EditProfile(String id) {
+        
+        tempid=id;
+        
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBounds(10, 10, 1340, 720);
         this.setTitle("          Profile          ");
@@ -259,89 +264,88 @@ public final class EditProfile extends JFrame implements ActionListener {
 
         save.addActionListener(this);
         delete.addActionListener(this);
-        temp = s;
+        //temp = s;
+        
+        
 
-        /*-----------------file-------------------------------------------------------*/
-        dir = new File("Data");
-        dir.mkdir();
+        /*--------------------------------sql----------------------------------*/
+            
+            
+            try {
+                
+              
+                
+                String url="jdbc:mysql://localhost/ums";
+                String userName="root";
+                String Password="";
+                
+                Class.forName("com.mysql.jdbc.Driver");
+                
+                String query="SELECT * from students where sid="+id;
+                
+                Connection con=DriverManager.getConnection(url,userName,Password);
+                Statement st=con.createStatement();
 
-        loc = dir.getAbsolutePath();
+                ResultSet rs=st.executeQuery(query);
 
-        file1 = new File(loc + "/signup.txt");
-        file2 = new File(loc + "/temp.txt");
+                rs.next();
 
-        try {
-            Scanner fs = new Scanner(file1);
+                String name=rs.getString("name");
+                String dob=rs.getString("dob");
+                String gender=rs.getString("gender");
+                String email=rs.getString("email");
+                String phone=rs.getString("phone");
+                String dept=rs.getString("dept");
+                String level=rs.getString("level");
+                String semester=rs.getString("semester");
+                String session=rs.getString("session");
+                String pw=rs.getString("pass");
+                  
 
-            int i = 0;
-            boolean found = false;
+                //System.out.println("profile  "+email);
+                
+                
+                uf.setText(id);
+                namf.setText(name);
+                pff.setText(pw);
+               
+                
+                String d, m, y;
+                d = dob.substring(0, 2);
+                m = dob.substring(3, 5);
+                y = dob.substring(6, 10);
 
-            while (fs.hasNext()) {
-                String ss = fs.nextLine();
-                i++;
-
-                //System.out.println(ss+" "+i);
-                if (ss.equals(s) && (i % 11) == 1) {
-                    found = true;
-
-                    uf.setText(ss);
+                cbd.setSelectedItem(d);
+                cbm.setSelectedItem(m);
+                cby.setSelectedItem(y);
+                
+                
+                
+                if (gender.equals("Male")) {
+                       rb1.setSelected(true);
+                } else if (gender.equals("Female")) {
+                       rb2.setSelected(true);
                 }
-                if (found == true && (i % 11) == 2) {
-                    pff.setText(ss);
-                }
-
-                if (found == true && (i % 11) == 3) {
-                    namf.setText(ss);
-                }
-
-                if (found == true && (i % 11) == 4) {
-                    //bdf.setText(ss);
-
-                    String d, m, y;
-                    d = ss.substring(0, 2);
-                    m = ss.substring(3, 5);
-                    y = ss.substring(6, 10);
-
-                    cbd.setSelectedItem(d);
-                    cbm.setSelectedItem(m);
-                    cby.setSelectedItem(y);
-
-                }
-                if (found == true && (i % 11) == 5) {
-                    //genf.setText(ss);
-
-                    if (ss.equals("Male")) {
-                        rb1.setSelected(true);
-                    } else if (ss.equals("Female")) {
-                        rb2.setSelected(true);
-                    }
-                }
-                if (found == true && (i % 11) == 6) {
-                    emf.setText(ss);
-                }
-                if (found == true && (i % 11) == 7) {
-                    mbf.setText(ss);
-                }
-                if (found == true && (i % 11) == 8) {
-                    depf.setText(ss);
-                }
-                if (found == true && (i % 11) == 9) {
-                    cbl.setSelectedItem(ss);
-                }
-                if (found == true && (i % 11) == 10) {
-                    cbsm.setSelectedItem(ss);
-                }
-                if (found == true && (i % 11) == 0) {
-                    cbss.setSelectedItem(ss);
-                    break;
-                }
-
+                
+                emf.setText(email);
+                mbf.setText(phone);
+                depf.setText(dept);
+               
+                cbl.setSelectedItem(level);
+              
+                cbsm.setSelectedItem(semester);
+              
+                cbss.setSelectedItem(session);
+                  
+   
+            } catch (Exception ee) {
+             
+                System.out.println(ee);
             }
-            fs.close();
+            
+            /*--------------------------------sql----------------------------------*/
 
-        } catch (Exception ee) {
-            System.out.println(ee);
-        }
+       
 
     }
 
@@ -350,202 +354,111 @@ public final class EditProfile extends JFrame implements ActionListener {
 
         if (e.getSource() == save) {
 
-            String un = uf.getText();
-
-            String pass, nam, bd, gen = "", em, mb, dep, lev, sem, ses;
-
-            pass = pff.getText();
-            nam = namf.getText();
-
-            String d, m, y;
-            d = cbd.getSelectedItem().toString();
-            m = cbm.getSelectedItem().toString();
-            y = cby.getSelectedItem().toString();
-
-            bd = d + "/" + m + "/" + y;
-
-            if (rb1.isSelected()) {
-                gen = "Male";
-            } else if (rb2.isSelected()) {
-                gen = "Female";
-            }
-
-            em = emf.getText();
-            mb = mbf.getText();
-            dep = depf.getText();
-            lev = cbl.getSelectedItem().toString();
-            sem = cbsm.getSelectedItem().toString();
-            ses = cbss.getSelectedItem().toString();
-
-            try {
-                Scanner fs = new Scanner(file1);
-
-                Formatter fm = new Formatter(loc + "/temp.txt");
-
-                int i = 0;
-                boolean found = false;
-
-                while (fs.hasNext()) {
-                    String s = fs.nextLine();
-                    i++;
-                    //System.out.println(s);
-
-                    if (s.equals(un) && (i % 11) == 1) {
-
-                        found = true;
-
-                        fm.format(un + "\r\n");
-                    } else if (found == true && (i % 11) == 2) {
-
-                        fm.format(pass + "\r\n");
-                    } else if (found == true && (i % 11) == 3) {
-
-                        fm.format(nam + "\r\n");
-                    } else if (found == true && (i % 11) == 4) {
-
-                        fm.format(bd + "\r\n");
-                    } else if (found == true && (i % 11) == 5) {
-
-                        fm.format(gen + "\r\n");
-                    } else if (found == true && (i % 11) == 6) {
-
-                        fm.format(em + "\r\n");
-                    } else if (found == true && (i % 11) == 7) {
-
-                        fm.format(mb + "\r\n");
-                    } else if (found == true && (i % 11) == 8) {
-
-                        fm.format(dep + "\r\n");
-                    } else if (found == true && (i % 11) == 9) {
-
-                        fm.format(lev + "\r\n");
-                    } else if (found == true && (i % 11) == 10) {
-
-                        fm.format(sem + "\r\n");
-                    } else if (found == true && (i % 11) == 0) {
-
-                        fm.format(ses + "\r\n");
-                        found = false;
-                    } else {
-
-                        fm.format(s + "\r\n");
-                    }
-
-                }
-                fs.close();
-                fm.close();
-
-            } catch (Exception ee) {
-                System.out.println(ee);
-            }
-
-            //---------------------------------transfer from temp to signup-----------------------------//
+            
+            
             try {
 
-                Scanner fs = new Scanner(file2);
+                    String url = "jdbc:mysql://localhost/ums";
+                    String userName = "root";
+                    String Password = "";
 
-                Formatter fm = new Formatter(loc + "/signup.txt");
+                    Class.forName("com.mysql.jdbc.Driver");
+                    
+                    
+                    /*-------------------------------getting data from textfield-------------*/
+                        
+                        String nam, bd, gen = "", em, mb, dep, lev, sem, ses,pw;
 
-                while (fs.hasNext()) {
+                        nam = namf.getText();
+                        
+                        pw=pff.getText();
 
-                    String s = fs.nextLine();
-                    fm.format(s + "\r\n");
+                        String d, m, y;
+                        d = cbd.getSelectedItem().toString();
+                        m = cbm.getSelectedItem().toString();
+                        y = cby.getSelectedItem().toString();
+
+                        bd = d + "/" + m + "/" + y;
+
+                        if (rb1.isSelected()) {
+                            gen = "Male";
+                        } else if (rb2.isSelected()) {
+                            gen = "Female";
+                        }
+
+                        em = emf.getText();
+                        mb = mbf.getText();
+                        dep = depf.getText();
+                        lev = cbl.getSelectedItem().toString();
+                        sem = cbsm.getSelectedItem().toString();
+                        ses = cbss.getSelectedItem().toString();
+                        
+                        
+                        
+                    /*-----------------make update query--------------------------------------------*/
+
+                    String query = "UPDATE students set name='"+nam+"', pass='"+pw+"', dob='"+bd+"', email='"+em+"', phone='"+mb+"', dept='"+dep+"', level='"+lev+"', semester='"+sem+"', session='"+ses+"', gender='"+gen+"' where sid="+tempid;
+                    
+                    Connection con=DriverManager.getConnection(url,userName,Password);
+                    Statement st=con.createStatement();
+
+                    st.executeUpdate(query);
+                    
+                    
+                    /*------------------------------------show profile-------------------------------------*/
+                    dispose();
+                    Profile fr = new Profile(tempid);
+                    fr.setVisible(true);
+
+             
+
+                   
+                } catch (Exception ee) {     
+                    System.out.println(ee);
                 }
-                fs.close();
-                fm.close();
-
-            } catch (Exception ee) {
-                System.out.println(ee);
-            }
-
-            /*------------------------------------show profile-------------------------------------*/
-            dispose();
-            Profile fr = new Profile(un);
-            fr.setVisible(true);
+            
+            
+            
+            
+         
+      
         } else if (e.getSource() == delete) {
 
             int choice = JOptionPane.showConfirmDialog(null, "Do you want to delete", "warning", JOptionPane.YES_NO_OPTION);
             //System.out.println(choice);
 
             if (choice == 0) {
+                    
+                /*--------------------------------delete profile----------------------*/
+                
+                try{
+                    
+                    
+                    String url = "jdbc:mysql://localhost/ums";
+                    String userName = "root";
+                    String Password = "";
 
-                String un = uf.getText();
+                    Class.forName("com.mysql.jdbc.Driver");
+                    
+                    String query = "Delete from students where sid="+tempid;
+                    
+                    
+                    Connection con=DriverManager.getConnection(url,userName,Password);
+                    Statement st=con.createStatement();
 
-            try {
-                Scanner fs = new Scanner(file1);
-
-                Formatter fm = new Formatter(loc + "/temp.txt");
-
-                int i = 0;
-                boolean found = false;
-
-                while (fs.hasNext()) {
-                    String s = fs.nextLine();
-                    i++;
-                    //System.out.println(s);
-
-                    if (s.equals(un) && (i % 11) == 1) {
-
-                        found = true;
-
-                    } else if (found == true && (i % 11) == 2) {
-
-                    } else if (found == true && (i % 11) == 3) {
-
-                    } else if (found == true && (i % 11) == 4) {
-
-                    } else if (found == true && (i % 11) == 5) {
-
-                    } else if (found == true && (i % 11) == 6) {
-
-                    } else if (found == true && (i % 11) == 7) {
-
-                    } else if (found == true && (i % 11) == 8) {
-
-                    } else if (found == true && (i % 11) == 9) {
-
-                    } else if (found == true && (i % 11) == 10) {
-
-                    } else if (found == true && (i % 11) == 0) {
-
-                        found = false;
-                    } else {
-
-                        fm.format(s + "\r\n");
-                    }
-
+                    st.executeUpdate(query);
+                    
+                    /*--------------profile deleted---------------------------*/
+                    dispose();
+                    StudentLogin fr = new StudentLogin();
+                    fr.setVisible(true);
+                    
+                    
+                    
+                }catch (Exception ee) {     
+                    System.out.println(ee);
                 }
-                fs.close();
-                fm.close();
-
-            } catch (Exception ee) {
-                System.out.println(ee);
-            }
-
-            //---------------------------------transfer from temp to signup-----------------------------//
-            try {
-
-                Scanner fs = new Scanner(file2);
-
-                Formatter fm = new Formatter(loc + "/signup.txt");
-
-                while (fs.hasNext()) {
-
-                    String s = fs.nextLine();
-                    fm.format(s + "\r\n");
-                }
-                fs.close();
-                fm.close();
-
-            } catch (Exception ee) {
-                System.out.println(ee);
-            }
-
-            /*--------------profile deleted---------------------------*/
-                dispose();
-                StudentLogin fr = new StudentLogin();
-                fr.setVisible(true);
-
+         
             }
 
         }

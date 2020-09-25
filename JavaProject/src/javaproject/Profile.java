@@ -37,6 +37,9 @@ public final class Profile extends JFrame implements ActionListener {
     String loc, tmp;
 
     Profile(String id) {
+        
+        tmp=id;
+        
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBounds(10, 10, 1340, 720);
         this.setTitle("          Profile          ");
@@ -245,6 +248,7 @@ public final class Profile extends JFrame implements ActionListener {
    
             } catch (Exception ee) {
              
+                
                 System.out.println(ee);
             }
             
